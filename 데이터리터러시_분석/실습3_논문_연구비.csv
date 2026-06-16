@@ -1,0 +1,26 @@
+﻿연도,저널,분야,피인용수,공저자수,연구비(백만원),오픈액세스
+2020,J. Mater. Sci,소재,60,4,50,Y
+2020,Nano Letters,소재 ,95,7,120,N
+2020,IEEE Access,정보통신,55,4,40,Y
+2020,Bioinformatics,생명,110,6,90,Y
+2020,Cell Reports,생명,210,9,200,Y
+2021,J. Mater. Sci,소재,,5,60,Y
+2021,Nano Letters,소재,140,6,110,N
+2021,ICML Proc,정보통신,350,5,80,Y
+2021,Bioinformatics,생명,88,5,85,Y
+2021,Cell Reports,생명,230,11,250,Y
+2022,Nano Letters,소재,160,8,150,N
+2022,NeurIPS Proc,정보통신,480,6,95,Y
+2022,Bioinformatics,생명,92,5,80,Y
+2022,Cell Reports,생명,260,12,280,Y
+2022,J. Comp. Phys,물리,-5,3,30,N
+2023,Nano Letters,소재,175,7,140,N
+2023,NeurIPS Proc,정보통신,520,7,100,Y
+2023,Bioinformatics,생명,105,6,95,Y
+2023,Cell Reports,생명,260,12,300,Y
+2023,J. Comp. Phys,물리,30,2,25,N
+2024,Nano Letters,소재,190,8,160,N
+2024,ICLR Proc,정보통신,610,8,130,Y
+2024,Bioinformatics,생명,118,6,100,Y
+2024,Cell Reports,생명,280,13,320,Y
+2024,J. Comp. Phys,물리,35,3,28,N

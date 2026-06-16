@@ -1,0 +1,125 @@
+# config.yaml — 얇은 가변 층
+# "어떤 CSV의 / 어떤 열이 x·y·group 인지 / 어떤 차트를 / 무슨 제목으로"
+# 데이터가 바뀌면 보통 이 파일만 고친다(코드는 그대로). style.py 는 절대 수정 금지.
+
+# --- 데이터 소스 -------------------------------------------------------
+data:
+  aggregated:      ../data/trackB_aging.csv       # 집계본(국가×클러스터×연도×논문수)
+  aggregated_next: ../data/trackB_aging_next.csv  # 차기 집계본(동일 스키마)
+  papers:          ../data/trackB_papers.csv      # 논문 단위(피인용·공동연구자·국제공동연구)
+
+output_dir: output
+
+# --- 검증 규칙(validate.py가 사용) -------------------------------------
+validation:
+  aggregated:
+    required_columns: [country, cluster_id, cluster_name, year, paper_count]
+    numeric_columns:  [cluster_id, year, paper_count]
+    nonnegative_columns: [paper_count]
+    year_column: year
+    year_range: [1985, 2030]
+    whitelist:
+      country: [한국, 미국, 일본, 중국]
+      cluster_id: [1, 2, 3, 4, 5, 6, 7, 8]
+  aggregated_next:
+    required_columns: [country, cluster_id, cluster_name, year, paper_count]
+    numeric_columns:  [cluster_id, year, paper_count]
+    nonnegative_columns: [paper_count]
+    year_column: year
+    year_range: [1985, 2030]
+    whitelist:
+      country: [한국, 미국, 일본, 중국]
+      cluster_id: [1, 2, 3, 4, 5, 6, 7, 8]
+  papers:
+    required_columns: [paper_id, country, cluster_id, year, citations, coauthors, intl_collab]
+    numeric_columns:  [citations, coauthors, intl_collab]
+    nonnegative_columns: [citations, coauthors]
+    year_column: year
+    year_range: [1985, 2030]
+    whitelist:
+      country: [한국, 미국, 일본, 중국]
+
+# --- 차트 명세 ---------------------------------------------------------
+# 각 항목: id / func(report_charts의 함수명) / source(aggregated|papers) /
+#          x,y,group 등 매핑 / title
+charts:
+  - id: area
+    func: plot_stacked_area
+    source: aggregated
+    x: year
+    y: paper_count
+    group: country
+    title: "주요국 고령화 연구 논문 수 추이 (누적영역)"
+
+  - id: area
+    func: plot_stacked_area
+    source: aggregated_next
+    x: year
+    y: paper_count
+    group: country
+    title: "국가별 논문 수 누적 영역차트 (next)"
+
+  - id: area_papers
+    func: plot_stacked_area
+    source: papers
+    transform: papers_count
+    x: year
+    y: paper_count
+    group: country
+    title: "국가별 논문 수 누적 영역차트 (papers)"
+
+  - id: area_pct
+    func: plot_pct_stacked_area
+    source: aggregated
+    x: year
+    y: paper_count
+    group: country
+    title: "주요국 비중 변화 (100% 누적영역)"
+
+  - id: clusterline
+    func: plot_facet_line
+    source: aggregated
+    x: year
+    y: paper_count
+    group: cluster_name
+    facet: country
+    title: "국가별 클러스터 연구 추이 (small multiples)"
+
+  - id: heatmap_cluster_year
+    func: plot_heatmap
+    source: aggregated
+    x: year
+    y: cluster_name
+    value: paper_count
+    title: "클러스터 × 연도 논문수 히트맵"
+
+  - id: violin_citations
+    func: plot_violin
+    source: papers
+    x: country
+    y: citations
+    title: "국가별 피인용수 분포 (바이올린)"
+
+  - id: box_coauthors
+    func: plot_box
+    source: papers
+    x: country
+    y: coauthors
+    title: "국가별 공동연구자 수 분포 (박스)"
+
+  - id: scatter_cite_coauthor
+    func: plot_scatter
+    source: papers
+    x: coauthors
+    y: citations
+    group: country
+    size: citations
+    title: "공동연구자수 × 피인용수 (버블=피인용)"
+
+  - id: diverging_growth
+    func: plot_diverging_bar
+    source: aggregated
+    x: cluster_name
+    y: paper_count
+    title: "클러스터별 최근 증감 (발산형 분할막대)"
+    transform: cluster_growth   # run_report가 전처리(2025 vs 2015 증감)

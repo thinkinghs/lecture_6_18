@@ -1,0 +1,48 @@
+# answer_key/config_trackC.yaml — 블록 4 적응 실습 "정답 적응본"
+# 트랙 C 데이터는 정상본과 (ⓐ)열 이름이 다르고, (ⓑ)롤리팝 차트 1개가 새로 필요하다.
+#  - 정상본 열 → 트랙 C 열 매핑:
+#      country→nation, cluster_id→field_id, cluster_name→field,
+#      year→pub_year, paper_count→n_papers
+#  - style.py 는 수정하지 않음 → 룩은 그대로 유지됨
+
+data:
+  aggregated: ../data/trackC_aging.csv     # 적응 실습용(열 이름 다름)
+
+output_dir: output_trackC
+
+validation:
+  aggregated:
+    required_columns: [nation, field_id, field, pub_year, n_papers]
+    numeric_columns:  [field_id, pub_year, n_papers]
+    nonnegative_columns: [n_papers]
+    year_column: pub_year
+    year_range: [1985, 2030]
+    whitelist:
+      nation: [한국, 미국, 일본, 중국]
+      field_id: [1, 2, 3, 4, 5, 6, 7, 8]
+
+charts:
+  # 기존 함수 재사용 — 열 이름만 새 스키마로 매핑(코드 변경 없음)
+  - id: area_stacked
+    func: plot_stacked_area
+    source: aggregated
+    x: pub_year
+    y: n_papers
+    group: nation
+    title: "주요국 고령화 연구 추이 (적응본, 누적영역)"
+
+  - id: heatmap_field_year
+    func: plot_heatmap
+    source: aggregated
+    x: pub_year
+    y: field
+    value: n_papers
+    title: "분야 × 연도 논문수 히트맵 (적응본)"
+
+  # ⓑ 새로 필요한 차트: 롤리팝(막대 계열 변형) — report_charts.py 에 함수 추가 필요
+  - id: lollipop_field_total
+    func: plot_lollipop
+    source: aggregated
+    x: field
+    y: n_papers
+    title: "분야별 누적 논문수 순위 (롤리팝)"
