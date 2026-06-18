@@ -40,6 +40,11 @@ def apply_transform(name: str, df: pd.DataFrame) -> pd.DataFrame:
         growth = (recent - base).reset_index()
         growth.columns = ["cluster_name", "paper_count"]
         return growth
+    if name == "exec_rate_deviation":
+        # 부서별 연평균 집행률 - 100 (플러스=초과, 마이너스=미달)
+        avg = df.groupby("department")["exec_rate"].mean().reset_index()
+        avg["exec_rate"] = avg["exec_rate"] - 100
+        return avg
     return df
 
 

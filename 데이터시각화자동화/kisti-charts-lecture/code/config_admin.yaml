@@ -1,0 +1,43 @@
+# config_admin.yaml — 트랙 A 행정 데이터 전용 설정
+
+data:
+  admin: ../data/trackA_admin.csv
+
+output_dir: output
+
+validation:
+  admin:
+    required_columns: [department, month, budget_plan, budget_exec, headcount, projects, exec_rate]
+    numeric_columns:  [budget_plan, budget_exec, headcount, projects, exec_rate]
+    nonnegative_columns: [budget_plan, budget_exec, headcount, projects]
+
+charts:
+  - id: admin_exec_trend
+    func: plot_sns_line
+    source: admin
+    x: month
+    y: exec_rate
+    group: department
+    title: "부서별 월별 예산 집행률 추이 (%)"
+
+  - id: admin_exec_dist
+    func: plot_sns_box
+    source: admin
+    x: department
+    y: exec_rate
+    title: "부서별 집행률 분포 (박스플롯)"
+
+  - id: admin_budget_heatmap
+    func: plot_sns_heatmap
+    source: admin
+    x: month
+    y: department
+    value: exec_rate
+    title: "부서 × 월 집행률 히트맵 (%)"
+
+  - id: admin_budget_bar
+    func: plot_sns_bar
+    source: admin
+    x: department
+    y: budget_exec
+    title: "부서별 연간 예산 집행 총액 (억원)"

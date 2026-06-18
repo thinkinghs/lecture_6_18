@@ -7,6 +7,7 @@ data:
   aggregated:      ../data/trackB_aging.csv       # 집계본(국가×클러스터×연도×논문수)
   aggregated_next: ../data/trackB_aging_next.csv  # 차기 집계본(동일 스키마)
   papers:          ../data/trackB_papers.csv      # 논문 단위(피인용·공동연구자·국제공동연구)
+  admin:           ../data/trackA_admin.csv       # 행정 데이터(부서별 월별 예산·인원·집행률)
 
 output_dir: output
 
@@ -38,6 +39,10 @@ validation:
     year_range: [1985, 2030]
     whitelist:
       country: [한국, 미국, 일본, 중국]
+  admin:
+    required_columns: [department, month, budget_plan, budget_exec, headcount, projects, exec_rate]
+    numeric_columns:  [budget_plan, budget_exec, headcount, projects, exec_rate]
+    nonnegative_columns: [budget_plan, budget_exec, headcount, projects]
 
 # --- 차트 명세 ---------------------------------------------------------
 # 각 항목: id / func(report_charts의 함수명) / source(aggregated|papers) /
@@ -123,3 +128,34 @@ charts:
     y: paper_count
     title: "클러스터별 최근 증감 (발산형 분할막대)"
     transform: cluster_growth   # run_report가 전처리(2025 vs 2015 증감)
+
+  # --- 트랙 A 행정 차트 (seaborn) ----------------------------------------
+  - id: admin_exec_trend
+    func: plot_sns_line
+    source: admin
+    x: month
+    y: exec_rate
+    group: department
+    title: "부서별 월별 예산 집행률 추이 (%)"
+
+  - id: admin_exec_dist
+    func: plot_sns_box
+    source: admin
+    x: department
+    y: exec_rate
+    title: "부서별 집행률 분포 (박스플롯)"
+
+  - id: admin_budget_heatmap
+    func: plot_sns_heatmap
+    source: admin
+    x: month
+    y: department
+    value: exec_rate
+    title: "부서 × 월 집행률 히트맵 (%)"
+
+  - id: admin_budget_bar
+    func: plot_sns_bar
+    source: admin
+    x: department
+    y: budget_exec
+    title: "부서별 월평균 예산 집행액 (억원)"
